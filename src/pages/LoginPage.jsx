@@ -2,6 +2,7 @@ import axios from "axios";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { TextField, Button } from '@mui/material'
 
 function LoginPage() {
   const { setIsLoggedIn, setUser } = useContext(AuthContext);
@@ -52,27 +53,30 @@ function LoginPage() {
       <h1>Login Form</h1>
 
       <form onSubmit={handleLogin}>
-        <label>Email:</label>
-        <input
-          type="email"
-          name="email"
-          value={email}
-          onChange={handleEmailChange}
-        />
+        <TextField
+        type="text"
+        variant="outlined"
+        size="small"
+        label="email"
+        name="email"
+        value={email}
+        onChange={handleEmailChange}
+      />
+        <br />
+
+        <TextField
+        type="password"
+        variant="outlined"
+        size="small"
+        label="password"
+        name="password"
+        value={password}
+        onChange={handlePasswordChange}
+      />
 
         <br />
 
-        <label>Password:</label>
-        <input
-          type="password"
-          name="password"
-          value={password}
-          onChange={handlePasswordChange}
-        />
-
-        <br />
-
-        <button type="submit">Login</button>
+        <Button type="submit">Login</Button>
 
         {errorMessage && <p>{errorMessage}</p>}
       </form>
