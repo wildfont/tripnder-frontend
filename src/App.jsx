@@ -10,6 +10,8 @@ import ConnectionsPage from './pages/ConnectionsPage'
 import ProfilePage from './pages/ProfilePage'
 import EditProfilePage from './pages/EditProfilePage'
 import ChatPage from './pages/ChatPage'
+import IsAnon from './components/IsAnon.jsx'
+import IsPrivate from './components/IsPrivate.jsx'
 
 
 
@@ -19,15 +21,15 @@ function App() {
     <>
     <Navbar />
     <Routes>
-      <Route path="/" element={<LandingPage/>}/>
-      <Route path="/login" element={<LoginPage/>}/>
-      <Route path="/signup" element={<SignupPage/>}/>
-      <Route path="/explore" element={<ExplorePage/>}/>
-      <Route path="/destinations" element={<DestinationsPage/>}/>
-      <Route path="/connections" element={<ConnectionsPage/>}/>
-      <Route path="/profile" element={<ProfilePage/>}/>
-      <Route path="/editprofile" element={<EditProfilePage/>}/>
-      <Route path="/chat/:connectionId" element={<ChatPage/>}/>
+      <Route path="/" element={<IsAnon><LandingPage/></IsAnon>}/>
+      <Route path="/login" element={<IsAnon><LoginPage/></IsAnon>}/>
+      <Route path="/signup" element={<IsAnon><SignupPage/></IsAnon>}/>
+      <Route path="/explore" element={<IsPrivate><ExplorePage/></IsPrivate>}/>
+      <Route path="/destinations" element={<IsPrivate><DestinationsPage/></IsPrivate>}/>
+      <Route path="/connections" element={<IsPrivate><ConnectionsPage/></IsPrivate>}/>
+      <Route path="/profile" element={<IsPrivate><ProfilePage/></IsPrivate>}/>
+      <Route path="/editprofile" element={<IsPrivate><EditProfilePage/></IsPrivate>}/>
+      <Route path="/chat/:connectionId" element={<IsPrivate><ChatPage/></IsPrivate>}/>
     </Routes>
     </>
   )
