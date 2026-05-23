@@ -6,12 +6,14 @@ const AuthContext = createContext();
 function AuthWrapper(props) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const passedContext = {
     isLoggedIn,
     setIsLoggedIn,
     setUser,
     user,
+    isLoading,
   };
 
   useEffect(() => {
@@ -24,8 +26,12 @@ function AuthWrapper(props) {
       .then((response) => {
         setIsLoggedIn(true);
         setUser(response.data.payload);
+        setIsLoading(false);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+        setIsLoading(false);
+      });
   }, []);
 
   return (
