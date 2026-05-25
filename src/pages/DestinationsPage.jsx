@@ -5,8 +5,7 @@ function DestinationsPage() {
   const [destinations, setDestinations] = useState([]);
   const token = localStorage.getItem("authToken");
 
-   useEffect(() => {
-
+  useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_API_URL}/destinations`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -18,7 +17,12 @@ function DestinationsPage() {
       .catch((error) => console.log(error));
   }, []);
   return (
-    <div>DestinationsPage</div>
-  )
+    <div>
+      DestinationsPage
+      {destinations.map((destination) => {
+        return<div key={destination._id}>{destination.city}</div>;
+      })}
+    </div>
+  );
 }
-export default DestinationsPage
+export default DestinationsPage;

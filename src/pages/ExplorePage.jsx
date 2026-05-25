@@ -46,7 +46,7 @@ function ExplorePage() {
             }}
             key={user._id}
           >
-            {user.firstName}
+            {user.firstName} {user.lastName}
           </TinderCard>
         );
       })}
