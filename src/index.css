@@ -1,0 +1,28 @@
+:root {
+  --bg: #282828;
+  --surface: #242424;
+  --accent: #E8175D;
+  --text: #F5F5F5;
+  --text-secondary: #A0A0A0;
+  --border: #333333;
+}
+
+[data-theme="light"] {
+  --bg: #F5F5F5;
+  --surface: #FFFFFF;
+  --accent: #E8175D;
+  --text: #121212;
+  --text-secondary: #555555;
+  --border: #DDDDDD;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+#root {
+  padding-bottom: 56px;
+}

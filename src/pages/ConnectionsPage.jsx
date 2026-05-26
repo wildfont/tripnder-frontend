@@ -2,11 +2,13 @@ import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { Button } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function ConnectionsPage() {
   const [connections, setConnections] = useState([]);
   const token = localStorage.getItem("authToken");
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -67,6 +69,7 @@ function ConnectionsPage() {
           <div key={c._id}>
             <span>{otherUser?.firstName} {otherUser?.lastName}</span>
             <Button onClick={() => handleDelete(c._id)}>Remove</Button>
+            <Button onClick={() => navigate(`/chat/${c._id}`)}>Chat</Button>
           </div>
         );
       })}
