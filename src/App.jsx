@@ -19,7 +19,7 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import logo from "./assets/logo.png";
 
 function App() {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, isLoading } = useContext(AuthContext);
   if (isLoading)
     return (
       <Box
