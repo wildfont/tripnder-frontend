@@ -7,6 +7,7 @@ function AuthWrapper(props) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [darkMode, setDarkMode] = useState(true);
 
   const passedContext = {
     isLoggedIn,
@@ -14,6 +15,8 @@ function AuthWrapper(props) {
     setUser,
     user,
     isLoading,
+    darkMode,
+    setDarkMode,
   };
 
   useEffect(() => {

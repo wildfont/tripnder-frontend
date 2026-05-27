@@ -1,12 +1,12 @@
 import { AppBar, Toolbar, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 function Navbar() {
-  const { isLoggedIn, setIsLoggedIn, setUser } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn, setUser, darkMode, setDarkMode } =
+    useContext(AuthContext);
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(true);
 
   const toggleTheme = () => {
     setDarkMode(!darkMode);
@@ -24,8 +24,11 @@ function Navbar() {
   };
 
   return (
-<AppBar position="static" sx={{ background: "linear-gradient(135deg, #000000 0%, #E8175D 100%)" }}>
-          <Toolbar>
+    <AppBar
+      position="static"
+      sx={{ background: "linear-gradient(135deg, #000000 0%, #E8175D 100%)" }}
+    >
+      <Toolbar>
         <Typography
           variant="h6"
           sx={{ flexGrow: 1, cursor: "pointer" }}
