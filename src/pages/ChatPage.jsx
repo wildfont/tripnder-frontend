@@ -6,7 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 import { TextField, Button } from "@mui/material";
 
 
-const socket = io(import.meta.env.VITE_API_URL);
+//! const socket = io(import.meta.env.VITE_API_URL);
 const token = localStorage.getItem("authToken");
 
 function ChatPage() {
@@ -23,19 +23,19 @@ function ChatPage() {
       .then((response) => setMessages(response.data))
       .catch((error) => console.log(error));
 
-    socket.emit("join_room", connectionId);
+    //! socket.emit("join_room", connectionId);
 
-    socket.on("new_message", (message) => {
-      setMessages((prev) => [...prev, message]);
-    });
+    //! socket.on("new_message", (message) => {
+    //!  setMessages((prev) => [...prev, message]);
+  //!  });
   }, []);
   const sendMessage = () => {
   if (!text.trim()) return;
-  socket.emit("send_message", {
-    connectionId,
-    senderId: user._id,
-    text
-  });
+  //!socket.emit("send_message", {
+  //!  connectionId,
+  //!  senderId: user._id,
+  //!  text
+  //!});
   setText("");
 }; 
   return (
