@@ -15,9 +15,34 @@ import IsPrivate from "./components/IsPrivate.jsx";
 import BottomNav from "./components/BottomNav.jsx";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import { Box, CircularProgress, Typography } from "@mui/material";
+import logo from "./assets/logo.png";
 
 function App() {
   const { isLoggedIn } = useContext(AuthContext);
+  if (isLoading)
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          gap: 3,
+        }}
+      >
+        <img
+          src={logo}
+          style={{ width: "80px", animation: "pulse 1.5s infinite" }}
+          alt="loading"
+        />
+        <Typography variant="body2" sx={{ color: "var(--text-secondary)" }}>
+          Finding your travel companions...
+        </Typography>
+      </Box>
+    );
+
   return (
     <>
       <Navbar />

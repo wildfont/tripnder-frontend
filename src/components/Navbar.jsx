@@ -2,6 +2,7 @@ import { AppBar, Toolbar, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import logo from "../assets/logo.png";
 
 function Navbar() {
   const { isLoggedIn, setIsLoggedIn, setUser, darkMode, setDarkMode } =
@@ -35,9 +36,9 @@ function Navbar() {
           onClick={() => navigate("/")}
         >
           <img
-            src="src/assets/logo.png"
-            alt="logo"
+            src={logo}
             style={{ height: "40px", width: "auto" }}
+            alt="logo"
           />
         </Typography>
 
