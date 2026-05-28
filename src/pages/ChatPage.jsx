@@ -6,7 +6,6 @@ import { AuthContext } from "../context/AuthContext";
 import { TextField, Button, Box, Typography, Avatar } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
-//! const socket = io(import.meta.env.VITE_API_URL);
 const token = localStorage.getItem("authToken");
 
 function ChatPage() {
@@ -15,8 +14,11 @@ function ChatPage() {
   const [text, setText] = useState("");
   const { user } = useContext(AuthContext);
   const messagesEndRef = useRef(null);
+  const socketRef = useRef(null);
 
   useEffect(() => {
+    socketRef.current = io(import.meta.env.VITE_API_URL);
+
     axios
       .get(`${import.meta.env.VITE_API_URL}/messages/${connectionId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -24,10 +26,17 @@ function ChatPage() {
       .then((response) => setMessages(response.data))
       .catch((error) => console.log(error));
 
-    //! socket.emit("join_room", connectionId);
-    //! socket.on("new_message", (message) => {
-    //!   setMessages((prev) => [...prev, message]);
-    //! });
+    socketRef.current.emit("join_room", connectionId);
+    socketRef.current.on("new_message", (message) => {
+      setMessages((prev) => {
+        if (prev.some((m) => m._id === message._id)) return prev;
+        return [...prev, message];
+      });
+    });
+
+    return () => {
+      socketRef.current.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -36,11 +45,11 @@ function ChatPage() {
 
   const sendMessage = () => {
     if (!text.trim()) return;
-    //! socket.emit("send_message", {
-    //!   connectionId,
-    //!   senderId: user._id,
-    //!   text
-    //! });
+    socketRef.current.emit("send_message", {
+      connectionId,
+      senderId: user._id,
+      text,
+    });
     setText("");
   };
 
@@ -52,7 +61,6 @@ function ChatPage() {
         height: "calc(100vh - 112px)",
       }}
     >
-      {/* MESSAGES */}
       <Box
         sx={{
           flex: 1,
@@ -71,7 +79,9 @@ function ChatPage() {
           </Box>
         ) : (
           messages.map((message) => {
-            const isOwn = message.sender?._id === user?._id;
+            const isOwn =
+              message.sender?._id?.toString() === user?._id?.toString() ||
+              message.sender?.toString() === user?._id?.toString();
             return (
               <Box
                 key={message._id}
@@ -115,7 +125,6 @@ function ChatPage() {
         <div ref={messagesEndRef} />
       </Box>
 
-      {/* INPUT */}
       <Box
         sx={{
           padding: "12px 16px",
