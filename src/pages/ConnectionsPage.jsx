@@ -8,6 +8,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PeopleIcon from "@mui/icons-material/People";
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 
 function ConnectionsPage() {
   const [connections, setConnections] = useState([]);
@@ -20,9 +21,7 @@ function ConnectionsPage() {
       .get(`${import.meta.env.VITE_API_URL}/connections`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((response) => {
-        setConnections(response.data);
-      })
+      .then((response) => setConnections(response.data))
       .catch((error) => console.log(error));
   }, []);
 
@@ -52,10 +51,22 @@ function ConnectionsPage() {
     }
   };
 
-  const received = connections.filter(
-    (c) => c.status === "pending" && c.recipient?._id === user?._id,
+  const receivedPeople = connections.filter(
+    (c) =>
+      c.status === "pending" &&
+      c.recipient?._id === user?._id &&
+      !c.destination,
   );
-  const accepted = connections.filter((c) => c.status === "accepted");
+  const receivedTrips = connections.filter(
+    (c) =>
+      c.status === "pending" && c.recipient?._id === user?._id && c.destination,
+  );
+  const acceptedPeople = connections.filter(
+    (c) => c.status === "accepted" && !c.destination,
+  );
+  const acceptedTrips = connections.filter(
+    (c) => c.status === "accepted" && c.destination,
+  );
   const sent = connections.filter(
     (c) => c.status === "pending" && c.requester?._id === user?._id,
   );
@@ -89,32 +100,40 @@ function ConnectionsPage() {
     </Box>
   );
 
+  const SectionHeader = ({ label, count }) => (
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+      <Typography
+        variant="subtitle2"
+        sx={{
+          color: "var(--text-secondary)",
+          textTransform: "uppercase",
+          letterSpacing: 1,
+        }}
+      >
+        {label}
+      </Typography>
+      <Chip
+        label={count}
+        size="small"
+        sx={{ background: "#E8175D", color: "white", height: 20 }}
+      />
+    </Box>
+  );
+
   return (
     <Box sx={{ padding: "16px", maxWidth: "500px", margin: "0 auto" }}>
       <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
         Connections
       </Typography>
 
-      {received.length > 0 && (
+      {/* RECEIVED PEOPLE REQUESTS */}
+      {receivedPeople.length > 0 && (
         <Box sx={{ mb: 3 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-            <Typography
-              variant="subtitle2"
-              sx={{
-                color: "var(--text-secondary)",
-                textTransform: "uppercase",
-                letterSpacing: 1,
-              }}
-            >
-              Requests received
-            </Typography>
-            <Chip
-              label={received.length}
-              size="small"
-              sx={{ background: "#E8175D", color: "white", height: 20 }}
-            />
-          </Box>
-          {received.map((c) => (
+          <SectionHeader
+            label="People requests"
+            count={receivedPeople.length}
+          />
+          {receivedPeople.map((c) => (
             <UserCard key={c._id} otherUser={c.requester}>
               <Button
                 size="small"
@@ -150,25 +169,50 @@ function ConnectionsPage() {
         </Box>
       )}
 
-      <Box sx={{ mb: 3 }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-          <Typography
-            variant="subtitle2"
-            sx={{
-              color: "var(--text-secondary)",
-              textTransform: "uppercase",
-              letterSpacing: 1,
-            }}
-          >
-            Matches
-          </Typography>
-          <Chip
-            label={accepted.length}
-            size="small"
-            sx={{ background: "#E8175D", color: "white", height: 20 }}
-          />
+      {/* RECEIVED TRIP REQUESTS */}
+      {receivedTrips.length > 0 && (
+        <Box sx={{ mb: 3 }}>
+          <SectionHeader label="Trip requests" count={receivedTrips.length} />
+          {receivedTrips.map((c) => (
+            <UserCard key={c._id} otherUser={c.requester}>
+              <Button
+                size="small"
+                variant="contained"
+                onClick={() => handleUpdate(c._id, "accepted")}
+                sx={{
+                  minWidth: 0,
+                  borderRadius: "50%",
+                  width: 36,
+                  height: 36,
+                  p: 0,
+                }}
+              >
+                <CheckIcon fontSize="small" />
+              </Button>
+              <Button
+                size="small"
+                onClick={() => handleUpdate(c._id, "rejected")}
+                sx={{
+                  minWidth: 0,
+                  borderRadius: "50%",
+                  width: 36,
+                  height: 36,
+                  p: 0,
+                  border: "1px solid #ff4458",
+                  color: "#ff4458",
+                }}
+              >
+                <CloseIcon fontSize="small" />
+              </Button>
+            </UserCard>
+          ))}
         </Box>
-        {accepted.length === 0 ? (
+      )}
+
+      {/* MATCHES */}
+      <Box sx={{ mb: 3 }}>
+        <SectionHeader label="Matches" count={acceptedPeople.length} />
+        {acceptedPeople.length === 0 ? (
           <Box sx={{ textAlign: "center", py: 3 }}>
             <PeopleIcon sx={{ fontSize: 48, color: "var(--text-secondary)" }} />
             <Typography
@@ -179,7 +223,7 @@ function ConnectionsPage() {
             </Typography>
           </Box>
         ) : (
-          accepted.map((c) => {
+          acceptedPeople.map((c) => {
             const otherUser =
               c.requester?._id === user?._id ? c.recipient : c.requester;
             return (
@@ -219,6 +263,52 @@ function ConnectionsPage() {
         )}
       </Box>
 
+      {/* TRIP COMPANIONS */}
+      {acceptedTrips.length > 0 && (
+        <Box sx={{ mb: 3 }}>
+          <SectionHeader label="Trip companions" count={acceptedTrips.length} />
+          {acceptedTrips.map((c) => {
+            const otherUser =
+              c.requester?._id === user?._id ? c.recipient : c.requester;
+            return (
+              <UserCard key={c._id} otherUser={otherUser}>
+                <FlightTakeoffIcon sx={{ color: "#E8175D", mr: 1 }} />
+                <Button
+                  size="small"
+                  variant="contained"
+                  onClick={() => navigate(`/chat/${c._id}`)}
+                  sx={{
+                    minWidth: 0,
+                    borderRadius: "50%",
+                    width: 36,
+                    height: 36,
+                    p: 0,
+                  }}
+                >
+                  <ChatIcon fontSize="small" />
+                </Button>
+                <Button
+                  size="small"
+                  onClick={() => handleDelete(c._id)}
+                  sx={{
+                    minWidth: 0,
+                    borderRadius: "50%",
+                    width: 36,
+                    height: 36,
+                    p: 0,
+                    border: "1px solid #ff4458",
+                    color: "#ff4458",
+                  }}
+                >
+                  <DeleteIcon fontSize="small" />
+                </Button>
+              </UserCard>
+            );
+          })}
+        </Box>
+      )}
+
+      {/* SENT REQUESTS */}
       {sent.length > 0 && (
         <Box>
           <Typography
