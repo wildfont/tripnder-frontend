@@ -7,6 +7,8 @@ import {
   Typography,
   Card,
   CardContent,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
@@ -14,52 +16,53 @@ import { AuthContext } from "../context/AuthContext";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PeopleIcon from "@mui/icons-material/People";
 
 const countryFlags = {
-  "Spain": "🇪🇸",
-  "Japan": "🇯🇵",
-  "Italy": "🇮🇹",
-  "France": "🇫🇷",
-  "Germany": "🇩🇪",
-  "USA": "🇺🇸",
-  "UK": "🇬🇧",
-  "Portugal": "🇵🇹",
-  "Mexico": "🇲🇽",
-  "Argentina": "🇦🇷",
-  "Brazil": "🇧🇷",
-  "Australia": "🇦🇺",
-  "Canada": "🇨🇦",
-  "Thailand": "🇹🇭",
-  "China": "🇨🇳",
-  "India": "🇮🇳",
-  "Morocco": "🇲🇦",
-  "Greece": "🇬🇷",
-  "Netherlands": "🇳🇱",
-  "Sweden": "🇸🇪",
-  "Norway": "🇳🇴",
-  "Denmark": "🇩🇰",
-  "Switzerland": "🇨🇭",
-  "Austria": "🇦🇹",
-  "Belgium": "🇧🇪",
-  "Poland": "🇵🇱",
+  Spain: "🇪🇸",
+  Japan: "🇯🇵",
+  Italy: "🇮🇹",
+  France: "🇫🇷",
+  Germany: "🇩🇪",
+  USA: "🇺🇸",
+  UK: "🇬🇧",
+  Portugal: "🇵🇹",
+  Mexico: "🇲🇽",
+  Argentina: "🇦🇷",
+  Brazil: "🇧🇷",
+  Australia: "🇦🇺",
+  Canada: "🇨🇦",
+  Thailand: "🇹🇭",
+  China: "🇨🇳",
+  India: "🇮🇳",
+  Morocco: "🇲🇦",
+  Greece: "🇬🇷",
+  Netherlands: "🇳🇱",
+  Sweden: "🇸🇪",
+  Norway: "🇳🇴",
+  Denmark: "🇩🇰",
+  Switzerland: "🇨🇭",
+  Austria: "🇦🇹",
+  Belgium: "🇧🇪",
+  Poland: "🇵🇱",
   "Czech Republic": "🇨🇿",
-  "Hungary": "🇭🇺",
-  "Romania": "🇷🇴",
-  "Turkey": "🇹🇷",
-  "Egypt": "🇪🇬",
+  Hungary: "🇭🇺",
+  Romania: "🇷🇴",
+  Turkey: "🇹🇷",
+  Egypt: "🇪🇬",
   "South Africa": "🇿🇦",
-  "Kenya": "🇰🇪",
-  "Colombia": "🇨🇴",
-  "Peru": "🇵🇪",
-  "Chile": "🇨🇱",
+  Kenya: "🇰🇪",
+  Colombia: "🇨🇴",
+  Peru: "🇵🇪",
+  Chile: "🇨🇱",
   "South Korea": "🇰🇷",
-  "Vietnam": "🇻🇳",
-  "Indonesia": "🇮🇩",
-  "Philippines": "🇵🇭",
+  Vietnam: "🇻🇳",
+  Indonesia: "🇮🇩",
+  Philippines: "🇵🇭",
   "New Zealand": "🇳🇿",
-  "Ireland": "🇮🇪",
-  "Croatia": "🇭🇷",
-  "Iceland": "🇮🇸",
+  Ireland: "🇮🇪",
+  Croatia: "🇭🇷",
+  Iceland: "🇮🇸",
 };
 
 function DestinationsPage() {
@@ -92,21 +95,18 @@ function DestinationsPage() {
   };
 
   const datePickerSx = {
-  "& .MuiInputLabel-root": { color: "var(--text-secondary)" },
-  "& .MuiInputLabel-root.Mui-focused": { color: "#E8175D" },
-  width: "100%",
-  "& .MuiOutlinedInput-root": {
-    color: "var(--text)",
-    backgroundColor: `${inputBg} !important`,
-    "& fieldset": { borderColor: "var(--border)" },
-    "&:hover fieldset": { borderColor: "#E8175D" },
-    "&.Mui-focused fieldset": { borderColor: "#E8175D" },
-  },
-  "& .MuiInputBase-root": {
-    backgroundColor: `${inputBg} !important`,
-  },
-  "& .MuiSvgIcon-root": { color: "var(--text-secondary)" },
-};
+    "& .MuiInputLabel-root": { color: "var(--text-secondary)" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "#E8175D" },
+    width: "100%",
+    "& .MuiOutlinedInput-root": {
+      color: "var(--text)",
+      backgroundColor: inputBg,
+      "& fieldset": { borderColor: "var(--border)" },
+      "&:hover fieldset": { borderColor: "#E8175D" },
+      "&.Mui-focused fieldset": { borderColor: "#E8175D" },
+    },
+    "& .MuiSvgIcon-root": { color: "var(--text-secondary)" },
+  };
 
   useEffect(() => {
     axios
@@ -168,6 +168,21 @@ function DestinationsPage() {
     setDateTo(dayjs(destination.dateTo));
   };
 
+  const handleToggleOpen = async (id) => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL}/destinations/${id}/toggle`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      setDestinations(
+        destinations.map((d) => (d._id === id ? response.data : d)),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Box sx={{ padding: "16px", maxWidth: "500px", margin: "0 auto" }}>
       <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
@@ -194,49 +209,91 @@ function DestinationsPage() {
               mb: 2,
               background: "var(--surface)",
               borderRadius: "16px",
-              border: "1px solid var(--border)",
+              border: `1px solid ${destination.isOpen ? "#E8175D" : "var(--border)"}`,
             }}
           >
-            <CardContent
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Box>
-                <Typography variant="h6">
-                  {destination.flag} {destination.city}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "var(--text-secondary)" }}
-                >
-                  {destination.country}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{ color: "var(--text-secondary)" }}
-                >
-                  {dayjs(destination.dateFrom).format("DD/MM/YYYY")} →{" "}
-                  {dayjs(destination.dateTo).format("DD/MM/YYYY")}
-                </Typography>
+            <CardContent>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Box>
+                  <Typography variant="h6">
+                    {destination.flag} {destination.city}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "var(--text-secondary)" }}
+                  >
+                    {destination.country}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "var(--text-secondary)" }}
+                  >
+                    {dayjs(destination.dateFrom).format("DD/MM/YYYY")} →{" "}
+                    {dayjs(destination.dateTo).format("DD/MM/YYYY")}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <Button
+                    onClick={() => handleEdit(destination)}
+                    size="small"
+                    sx={{ minWidth: 0, color: "var(--text-secondary)" }}
+                  >
+                    <EditIcon fontSize="small" />
+                  </Button>
+                  <Button
+                    onClick={() => handleDelete(destination._id)}
+                    size="small"
+                    sx={{ minWidth: 0, color: "#ff4458" }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </Button>
+                </Box>
               </Box>
-              <Box sx={{ display: "flex", gap: 1 }}>
-                <Button
-                  onClick={() => handleEdit(destination)}
-                  size="small"
-                  sx={{ minWidth: 0, color: "var(--text-secondary)" }}
-                >
-                  <EditIcon fontSize="small" />
-                </Button>
-                <Button
-                  onClick={() => handleDelete(destination._id)}
-                  size="small"
-                  sx={{ minWidth: 0, color: "#ff4458" }}
-                >
-                  <DeleteIcon fontSize="small" />
-                </Button>
+              <Box
+                sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}
+              >
+                <PeopleIcon
+                  sx={{
+                    fontSize: 16,
+                    color: destination.isOpen
+                      ? "#E8175D"
+                      : "var(--text-secondary)",
+                  }}
+                />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={destination.isOpen || false}
+                      onChange={() => handleToggleOpen(destination._id)}
+                      size="small"
+                      sx={{
+                        "& .MuiSwitch-switchBase.Mui-checked": {
+                          color: "#E8175D",
+                        },
+                        "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                          { backgroundColor: "#E8175D" },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: destination.isOpen
+                          ? "#E8175D"
+                          : "var(--text-secondary)",
+                      }}
+                    >
+                      {destination.isOpen ? "Open to companions" : "Private"}
+                    </Typography>
+                  }
+                />
               </Box>
             </CardContent>
           </Card>
