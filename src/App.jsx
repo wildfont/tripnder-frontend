@@ -17,10 +17,11 @@ import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import logo from "./assets/logo.png";
+import LoadingScreen from "./components/LoadingScreen.jsx";
 
 function App() {
   const { isLoggedIn, isLoading } = useContext(AuthContext);
-  if (isLoading)
+  /* if (isLoading)
     return (
       <Box
         sx={{
@@ -42,7 +43,11 @@ function App() {
         </Typography>
       </Box>
     );
+*/
 
+  if (isLoading) {
+    return <LoadingScreen logo={logo} />;
+  }
   return (
     <>
       <Navbar />
