@@ -9,6 +9,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { createTheme, ThemeProvider } from "@mui/material";
 
 const theme = createTheme({
+  typography: {
+    fontSize: 16,
+    htmlFontSize: 16,
+  },
   palette: {
     primary: {
       main: "#E8175D",
