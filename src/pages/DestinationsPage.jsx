@@ -92,18 +92,21 @@ function DestinationsPage() {
   };
 
   const datePickerSx = {
-    "& .MuiInputLabel-root": { color: "var(--text-secondary)" },
-    "& .MuiInputLabel-root.Mui-focused": { color: "#E8175D" },
-    width: "100%",
-    "& .MuiOutlinedInput-root": {
-      color: "var(--text)",
-      backgroundColor: inputBg,
-      "& fieldset": { borderColor: "var(--border)" },
-      "&:hover fieldset": { borderColor: "#E8175D" },
-      "&.Mui-focused fieldset": { borderColor: "#E8175D" },
-    },
-    "& .MuiSvgIcon-root": { color: "var(--text-secondary)" },
-  };
+  "& .MuiInputLabel-root": { color: "var(--text-secondary)" },
+  "& .MuiInputLabel-root.Mui-focused": { color: "#E8175D" },
+  width: "100%",
+  "& .MuiOutlinedInput-root": {
+    color: "var(--text)",
+    backgroundColor: `${inputBg} !important`,
+    "& fieldset": { borderColor: "var(--border)" },
+    "&:hover fieldset": { borderColor: "#E8175D" },
+    "&.Mui-focused fieldset": { borderColor: "#E8175D" },
+  },
+  "& .MuiInputBase-root": {
+    backgroundColor: `${inputBg} !important`,
+  },
+  "& .MuiSvgIcon-root": { color: "var(--text-secondary)" },
+};
 
   useEffect(() => {
     axios

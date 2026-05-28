@@ -1,8 +1,13 @@
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
-import { Button } from "@mui/material";
+import { Button, Box, Typography, Avatar, Chip } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import ChatIcon from "@mui/icons-material/Chat";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
+import PeopleIcon from "@mui/icons-material/People";
 
 function ConnectionsPage() {
   const [connections, setConnections] = useState([]);
@@ -15,7 +20,9 @@ function ConnectionsPage() {
       .get(`${import.meta.env.VITE_API_URL}/connections`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((response) => setConnections(response.data))
+      .then((response) => {
+        setConnections(response.data);
+      })
       .catch((error) => console.log(error));
   }, []);
 
@@ -24,9 +31,11 @@ function ConnectionsPage() {
       const response = await axios.put(
         `${import.meta.env.VITE_API_URL}/connections/${id}`,
         { status },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-      setConnections(connections.map((c) => c._id === id ? response.data : c));
+      setConnections(
+        connections.map((c) => (c._id === id ? response.data : c)),
+      );
     } catch (error) {
       console.log(error);
     }
@@ -34,56 +43,210 @@ function ConnectionsPage() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `${import.meta.env.VITE_API_URL}/connections/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axios.delete(`${import.meta.env.VITE_API_URL}/connections/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setConnections(connections.filter((c) => c._id !== id));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const received = connections.filter((c) => c.status === "pending" && c.recipient?._id === user?._id);
+  const received = connections.filter(
+    (c) => c.status === "pending" && c.recipient?._id === user?._id,
+  );
   const accepted = connections.filter((c) => c.status === "accepted");
-  const sent = connections.filter((c) => c.status === "pending" && c.requester?._id === user?._id);
+  const sent = connections.filter(
+    (c) => c.status === "pending" && c.requester?._id === user?._id,
+  );
+
+  const UserCard = ({ otherUser, children }) => (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        p: 2,
+        mb: 1.5,
+        background: "var(--surface)",
+        borderRadius: "16px",
+        border: "1px solid var(--border)",
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <Avatar
+          src={otherUser?.avatar}
+          sx={{ width: 48, height: 48, bgcolor: "#E8175D" }}
+        >
+          {otherUser?.firstName?.[0]}
+          {otherUser?.lastName?.[0]}
+        </Avatar>
+        <Typography variant="subtitle1" fontWeight="bold">
+          {otherUser?.firstName} {otherUser?.lastName}
+        </Typography>
+      </Box>
+      <Box sx={{ display: "flex", gap: 1 }}>{children}</Box>
+    </Box>
+  );
 
   return (
-    <div>
-      <h2>Received requests</h2>
-      {received.map((c) => {
-        const otherUser = c.requester;
-        return (
-          <div key={c._id}>
-            <span>{otherUser?.firstName} {otherUser?.lastName}</span>
-            <Button onClick={() => handleUpdate(c._id, "accepted")}>Accept</Button>
-            <Button onClick={() => handleUpdate(c._id, "rejected")}>Reject</Button>
-          </div>
-        );
-      })}
+    <Box sx={{ padding: "16px", maxWidth: "500px", margin: "0 auto" }}>
+      <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
+        Connections
+      </Typography>
 
-      <h2>Matches</h2>
-      {accepted.map((c) => {
-        const otherUser = c.requester?._id === user?._id ? c.recipient : c.requester;
-        return (
-          <div key={c._id}>
-            <span>{otherUser?.firstName} {otherUser?.lastName}</span>
-            <Button onClick={() => handleDelete(c._id)}>Remove</Button>
-            <Button onClick={() => navigate(`/chat/${c._id}`)}>Chat</Button>
-          </div>
-        );
-      })}
+      {received.length > 0 && (
+        <Box sx={{ mb: 3 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                color: "var(--text-secondary)",
+                textTransform: "uppercase",
+                letterSpacing: 1,
+              }}
+            >
+              Requests received
+            </Typography>
+            <Chip
+              label={received.length}
+              size="small"
+              sx={{ background: "#E8175D", color: "white", height: 20 }}
+            />
+          </Box>
+          {received.map((c) => (
+            <UserCard key={c._id} otherUser={c.requester}>
+              <Button
+                size="small"
+                variant="contained"
+                onClick={() => handleUpdate(c._id, "accepted")}
+                sx={{
+                  minWidth: 0,
+                  borderRadius: "50%",
+                  width: 36,
+                  height: 36,
+                  p: 0,
+                }}
+              >
+                <CheckIcon fontSize="small" />
+              </Button>
+              <Button
+                size="small"
+                onClick={() => handleUpdate(c._id, "rejected")}
+                sx={{
+                  minWidth: 0,
+                  borderRadius: "50%",
+                  width: 36,
+                  height: 36,
+                  p: 0,
+                  border: "1px solid #ff4458",
+                  color: "#ff4458",
+                }}
+              >
+                <CloseIcon fontSize="small" />
+              </Button>
+            </UserCard>
+          ))}
+        </Box>
+      )}
 
-      <h2>Sent requests</h2>
-      {sent.map((c) => {
-        const otherUser = c.recipient;
-        return (
-          <div key={c._id}>
-            <span>{otherUser?.firstName} {otherUser?.lastName}</span>
-          </div>
-        );
-      })}
-    </div>
+      <Box sx={{ mb: 3 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              color: "var(--text-secondary)",
+              textTransform: "uppercase",
+              letterSpacing: 1,
+            }}
+          >
+            Matches
+          </Typography>
+          <Chip
+            label={accepted.length}
+            size="small"
+            sx={{ background: "#E8175D", color: "white", height: 20 }}
+          />
+        </Box>
+        {accepted.length === 0 ? (
+          <Box sx={{ textAlign: "center", py: 3 }}>
+            <PeopleIcon sx={{ fontSize: 48, color: "var(--text-secondary)" }} />
+            <Typography
+              variant="body2"
+              sx={{ color: "var(--text-secondary)", mt: 1 }}
+            >
+              No matches yet. Keep swiping!
+            </Typography>
+          </Box>
+        ) : (
+          accepted.map((c) => {
+            const otherUser =
+              c.requester?._id === user?._id ? c.recipient : c.requester;
+            return (
+              <UserCard key={c._id} otherUser={otherUser}>
+                <Button
+                  size="small"
+                  variant="contained"
+                  onClick={() => navigate(`/chat/${c._id}`)}
+                  sx={{
+                    minWidth: 0,
+                    borderRadius: "50%",
+                    width: 36,
+                    height: 36,
+                    p: 0,
+                  }}
+                >
+                  <ChatIcon fontSize="small" />
+                </Button>
+                <Button
+                  size="small"
+                  onClick={() => handleDelete(c._id)}
+                  sx={{
+                    minWidth: 0,
+                    borderRadius: "50%",
+                    width: 36,
+                    height: 36,
+                    p: 0,
+                    border: "1px solid #ff4458",
+                    color: "#ff4458",
+                  }}
+                >
+                  <DeleteIcon fontSize="small" />
+                </Button>
+              </UserCard>
+            );
+          })
+        )}
+      </Box>
+
+      {sent.length > 0 && (
+        <Box>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              color: "var(--text-secondary)",
+              textTransform: "uppercase",
+              letterSpacing: 1,
+              mb: 1.5,
+            }}
+          >
+            Sent requests
+          </Typography>
+          {sent.map((c) => (
+            <UserCard key={c._id} otherUser={c.recipient}>
+              <Chip
+                label="Pending"
+                size="small"
+                sx={{
+                  background: "rgba(255,255,255,0.1)",
+                  color: "var(--text-secondary)",
+                }}
+              />
+            </UserCard>
+          ))}
+        </Box>
+      )}
+    </Box>
   );
 }
 

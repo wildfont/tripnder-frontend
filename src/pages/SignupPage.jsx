@@ -166,8 +166,10 @@ function Signup() {
               label="Travel style"
               sx={selectSx}
               MenuProps={{
-                PaperProps: {
-                  sx: { backgroundColor: inputBg, color: "var(--text)" },
+                slotProps: {
+                  paper: {
+                    sx: { backgroundColor: inputBg, color: "var(--text)" },
+                  },
                 },
               }}
             >
@@ -193,8 +195,10 @@ function Signup() {
               label="Budget"
               sx={selectSx}
               MenuProps={{
-                PaperProps: {
-                  sx: { backgroundColor: inputBg, color: "var(--text)" },
+                slotProps: {
+                  paper: {
+                    sx: { backgroundColor: inputBg, color: "var(--text)" },
+                  },
                 },
               }}
             >

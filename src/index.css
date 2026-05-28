@@ -41,3 +41,11 @@ body {
   position: absolute !important;
   width: 100% !important;
 }
+.MuiPickersOutlinedInput-root {
+  background-color: #2d2d2d !important;
+  color: var(--text) !important;
+}
+
+.MuiPickersOutlinedInput-root input {
+  color: var(--text) !important;
+}
