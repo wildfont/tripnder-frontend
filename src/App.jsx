@@ -18,6 +18,7 @@ import { AuthContext } from "./context/AuthContext";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import logo from "./assets/logo.png";
 import LoadingScreen from "./components/LoadingScreen.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 function App() {
   const { isLoggedIn, isLoading } = useContext(AuthContext);
@@ -124,6 +125,7 @@ function App() {
             </IsPrivate>
           }
         />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       {isLoggedIn && <BottomNav />}
     </>
