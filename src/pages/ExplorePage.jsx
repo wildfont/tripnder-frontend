@@ -13,6 +13,7 @@ function ExplorePage() {
   const [users, setUsers] = useState([]);
   const [trips, setTrips] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [joinedTrips, setJoinedTrips] = useState([]);
   const cardRefs = useRef([]);
   const token = localStorage.getItem("authToken");
   const { user } = useContext(AuthContext);
@@ -60,13 +61,13 @@ function ExplorePage() {
   };
 
   const handleJoinTrip = async (ownerId, tripId) => {
-      console.log("joining trip", ownerId, tripId);
     try {
       await axios.post(
         `${import.meta.env.VITE_API_URL}/connections`,
         { recipient: ownerId, destination: tripId },
         { headers: { Authorization: `Bearer ${token}` } },
       );
+      setJoinedTrips((prev) => [...prev, tripId]);
     } catch (error) {
       console.log(error);
     }
@@ -400,12 +401,17 @@ function ExplorePage() {
                     </Typography>
                   </Box>
                   <Button
-                    variant="contained"
+                    variant={
+                      joinedTrips.includes(trip._id) ? "outlined" : "contained"
+                    }
                     size="small"
+                    disabled={joinedTrips.includes(trip._id)}
                     onClick={() => handleJoinTrip(trip.owner._id, trip._id)}
                     sx={{ borderRadius: "50px", fontSize: "12px" }}
                   >
-                    Join trip
+                    {joinedTrips.includes(trip._id)
+                      ? "Request sent ✓"
+                      : "Join trip"}
                   </Button>
                 </Box>
               </Box>
